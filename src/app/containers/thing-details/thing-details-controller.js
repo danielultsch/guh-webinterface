@@ -45,6 +45,7 @@
     vm.showActions = true;
     vm.showStates = false;
     vm.showSettings = false;
+    vm.logEntries = [1,2,3,4,5,6];
 
     vm.$onInit = $onInit;
     vm.back = back;
@@ -52,6 +53,12 @@
     vm.remove = remove;
     vm.isCritical = isCritical;
 
+    vm.updateLogEntries = updateLogEntries;
+
+    function updateLogEntries() {
+      $log.log("updateLogEntries");
+      vm.logEntries = [6,5,4,3,2,1];
+    }
 
     function $onInit() {
       if(!app.dataLoaded) {

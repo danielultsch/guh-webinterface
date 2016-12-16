@@ -45,4 +45,5 @@
   </div>
 
   <ng-include src="thingDetails.templateUrl" ng-if="thingDetails.templateReady"></ng-include>
+  <guh-diagram log-entries="thingDetails.logEntries" on-refetch="thingDetails.updateLogEntries()"></guh-diagram>
 </div>
