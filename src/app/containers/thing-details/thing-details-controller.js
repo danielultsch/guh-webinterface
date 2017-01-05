@@ -29,7 +29,7 @@
     .module('guh.containers')
     .controller('ThingDetailsCtrl', ThingDetailsCtrl);
 
-  ThingDetailsCtrl.$inject = ['app', 'libs', '$log', '$scope', '$filter', '$state', '$stateParams', 'DSDevice', 'DSDeviceClass', 'DSParamType', 'DSState', 'DSRule', 'NavigationBar', 'ActionBar', 'ModalContainer'];
+  ThingDetailsCtrl.$inject = ['app', 'libs', '$log', '$scope', '$filter', '$state', '$stateParams', 'DSDevice', 'DSDeviceClass', 'DSParamType', 'DSState', 'DSRule', 'DSLogging', 'NavigationBar', 'ActionBar', 'ModalContainer'];
 
   /**
    * @ngdoc controller
@@ -37,7 +37,7 @@
    * @description Container component for a single thing.
    *
    */
-  function ThingDetailsCtrl(app, libs, $log, $scope, $filter, $state, $stateParams, DSDevice, DSDeviceClass, DSParamType, DSState, DSRule, NavigationBar, ActionBar, ModalContainer) {
+  function ThingDetailsCtrl(app, libs, $log, $scope, $filter, $state, $stateParams, DSDevice, DSDeviceClass, DSParamType, DSState, DSRule, DSLogging, NavigationBar, ActionBar, ModalContainer) {
     
     var vm = this;
     var device;
@@ -45,7 +45,7 @@
     vm.showActions = true;
     vm.showStates = false;
     vm.showSettings = false;
-    vm.logEntries = [1,2,3,4,5,6];
+    vm.logEntries = [];
 
     vm.$onInit = $onInit;
     vm.back = back;
@@ -57,7 +57,11 @@
 
     function updateLogEntries() {
       $log.log("updateLogEntries");
-      vm.logEntries = [6,5,4,3,2,1];
+      $log.log('guh.controller.ThingDetailsCtrl deviceIds: ', {deviceIds: [vm.id]});
+      DSLogging.getLogEntries({deviceIds: [vm.id]}).then(function(fetchedLogEntries) {
+        $log.log('guh.controller.ThingDetailsCtrl fetchedLogEntries: ', fetchedLogEntries.logEntries);
+        vm.logEntries = fetchedLogEntries.logEntries;
+      });
     }
 
     function $onInit() {
@@ -103,6 +107,7 @@
     }
 
     function _initThing(device) {
+      $log.log('guh.controller.ThingDetailsCtrl initThing: ', device);
       vm.device = device;
       vm.setupComplete = device.setupComplete;
       vm.actions = [];
@@ -326,7 +331,7 @@
     }
 
     function isCritical() {
-      if(angular.isDefined(vm.deviceClass.criticalStateTypeId)) {
+      if(angular.isDefined(vm.deviceClass) && angular.isDefined(vm.deviceClass.criticalStateTypeId)) {
         var criticalStateTypes = vm.deviceClass.stateTypes.filter(function(stateType) {
           return stateType.id === vm.deviceClass.criticalStateTypeId;
         });

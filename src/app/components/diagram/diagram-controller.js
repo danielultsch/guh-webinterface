@@ -51,70 +51,101 @@
     }
 
     function $postLink() {
-      // var element = angular.element($element[0]);
-      console.log($element[0]);
+      $log.log("post Link", vm.logEntries);
+      _refresh();
+    }
+
+    function _refresh() {
+      $log.log("refresh diagram", vm.logEntries);
+
+      if(!vm.logEntries || vm.logEntries.length == 0) {
+        $log.log("no log entries", vm.logEntries);
+        return;
+      }
+
+      // TODO: remove this filter for temperature values
+      vm.logEntries = vm.logEntries.filter(function(entry) {
+        return ["{6013402f-b5b1-46b3-8490-f0c20d62fe61}", "{14ec2781-cb04-4bbf-b097-7d01ef982630}", "{fefe5563-452f-4833-b5cf-49c3cc67c772}"].indexOf(entry.typeId) > -1;
+      });
 
       var svg = d3.select($element[0]).select("svg");
-      var margin = {top: 20, right: 80, bottom: 30, left: 50},
-        width = svg.attr("width") - margin.left - margin.right,
-        height = svg.attr("height") - margin.top - margin.bottom,
-        g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+      var margin = {top: 20, right: 80, bottom: 30, left: 50};
+      var width = svg.attr("width") - margin.left - margin.right;
+      var height = svg.attr("height") - margin.top - margin.bottom;
+      var graph = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-      var parseTime = d3.timeParse("%d-%b-%y");
-
+      // scale styles
       var x = d3.scaleTime()
         .rangeRound([0, width]);
 
       var y = d3.scaleLinear()
         .rangeRound([height, 0]);
 
+      var z = d3.scaleOrdinal(d3.schemeCategory10);
+
       var line = d3.line()
         .x(function(d) {
-          return x(d.date);
+          return x(new Date(d.timestamp));
         })
         .y(function(d) {
-          return y(d.close);
+          if(isNaN(+d.value)) {
+            return 0;
+          }
+          return y(+d.value);
         });
 
-      d3.tsv("data.tsv", function(d) {
-        d.date = parseTime(d.date);
-        d.close = +d.close;
-        return d;
-      }, function(error, data) {
-        if(error) throw error;
+      var groupedData = d3.nest()
+        .key(function(d) {return d.typeId;})
+        .entries(vm.logEntries);
 
-        x.domain(d3.extent(data, function(d) {
-          return d.date;
-        }));
-        y.domain(d3.extent(data, function(d) {
-          return d.close;
-        }));
+      x.domain(d3.extent(vm.logEntries, function(d) {
+        return new Date(d.timestamp);
+      }));
 
-        g.append("g")
-          .attr("class", "axis axis--x")
-          .attr("transform", "translate(0," + height + ")")
-          .call(d3.axisBottom(x));
+      y.domain([
+        d3.min(vm.logEntries, function(c) { return (isNaN(+c.value)) ? 0 : +c.value}),
+        d3.max(vm.logEntries, function(c) { return (isNaN(+c.value)) ? 0 : +c.value})
+      ]);
 
-        g.append("g")
-          .attr("class", "axis axis--y")
-          .call(d3.axisLeft(y))
-          .append("text")
-          .attr("fill", "#000")
-          .attr("transform", "rotate(-90)")
-          .attr("y", 6)
-          .attr("dy", "0.71em")
-          .style("text-anchor", "end")
-          .text("Price ($)");
+      $log.log("grouped Data: before z domain ", groupedData);
 
-        g.append("path")
-          .datum(data)
-          .attr("class", "line")
-          .attr("d", line);
-      });
+      z.domain(groupedData.map(function(c) { $log.log(c.key, c); return c.key; }));
+
+      graph.append("g")
+        .attr("class", "axis axis--x")
+        .attr("transform", "translate(0," + height + ")")
+        .call(d3.axisBottom(x));
+
+      graph.append("g")
+        .attr("class", "axis axis--y")
+        .call(d3.axisLeft(y))
+        .append("text")
+        .attr("fill", "#000")
+        .attr("transform", "rotate(-90)")
+        .attr("y", 6)
+        .attr("dy", "0.71em")
+        .style("text-anchor", "end")
+        .text("Temperature (°C)");
+
+      var temperature = graph.selectAll(".temperature")
+        .data(groupedData)
+        .enter().append("g")
+        .attr("class", "temperature");
+
+      temperature.append("path")
+        .attr("class", "line")
+        .attr("d", function(d) { return line(d.values); })
+        .style("stroke", function(d) { return z(d.key); });
+
+      $log.log("grouped data: ", groupedData);
+
+      $log.log("refresh finished!");
+
     }
 
     function $onChanges(changesObj) {
       $log.log("Change Diagram", vm.logEntries, changesObj, changesObj.logEntries.isFirstChange());
+      _refresh();
     }
 
     function refetch() {
