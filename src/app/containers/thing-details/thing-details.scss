@@ -45,7 +45,6 @@
   }
 }
 
-
 .ThingDetails__sidebar {
   @include rem(margin, 0, 0, 6);
 }
@@ -112,4 +111,75 @@
   text-align: center;
   @include rem(padding, 0.35, 1.5);
   @include rem(margin, 0.7, 0, 0.1);
+}
+
+$household-dark-grey: rgb(67,67,67);
+$household-light-grey: rgb(169,169,169);
+$household-green: rgb(154,202,94);
+
+.Household__savings-container {
+  position: relative;
+  float: left;
+  width: 75%;
+}
+
+.Household__status-container {
+  position: absolute;
+  right:0px;
+  padding-right: 3rem;
+}
+
+.Household__savings-headline, span.Household__subtitle{
+  color: $household-dark-grey;
+  font-size: 18px;
+  line-height: 20px;
+}
+
+.Household__savings {
+  position:relative;
+  float:left;
+  margin-right: 30px;
+}
+
+.Household__savings-amount {
+  color: $household-green;
+  line-height: 80px;
+  font-size: 60px;
+  font-weight: lighter;
+}
+
+.Household__status-table {
+  font-size: 24px;
+  line-height: 26px;
+  color: $household-light-grey;
+  text-align: right;
+}
+
+.Household__status-table th{
+  width: 60px;
+}
+
+.Household__status-table-label {
+  width: 100px;
+  text-align: left;
+  padding-right: 30px;
+}
+
+.Household__status-table-24hours-label {
+  background: $household-dark-grey;
+  color:white;
+  font-size: 18px;
+  height: 20px;
+  border-radius: 20px;
+  padding: 3px 10px;
+  margin-top:5px;
+}
+
+.Household__status-table-24hours-label > svg {
+  height: 20px;
+  width: 20px;
+  fill: white;
+  position: relative;
+  top: 4px;
+  right:5px;
 }

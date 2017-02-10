@@ -26,9 +26,22 @@
   display: none;
 }
 
-.axis {
-  color: rgb(110, 110, 110);
+.axis path, .axis line{
+  color: rgb(103, 103, 103);
+  fill: none;
+  stroke: rgb(103, 103, 103);
+  stroke-width: 0.5px;
   font-family: Ubuntu;
+  font-weight: lighter;
+}
+
+.axis text {
+  color: rgb(103, 103, 103);
+  fill: rgb(103, 103, 103);
+  stroke: rgb(103, 103, 103);
+  stroke-width: 0.5px;
+  font-family: Ubuntu;
+  font-weight: lighter;
 }
 
 .line {

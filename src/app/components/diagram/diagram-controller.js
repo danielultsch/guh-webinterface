@@ -46,7 +46,6 @@
     vm.$onChanges = $onChanges;
     vm.refetch = refetch;
 
-    vm.runningDate = new Date();
     // vm.xAxis;
     // vm.yAxis;
     // vm.areaGrid;
@@ -189,12 +188,20 @@
       vm.yAxis = d3.scaleLinear()
         .rangeRound([height, 0]);
 
+      vm.areaECar = d3.area()
+        .x(function(d) {
+          return vm.xAxis(d.date);
+        })
+        .y1(function(d) {
+          return vm.yAxis(d.ecar_energy);
+        });
+
       vm.areaGrid = d3.area()
         .x(function(d) {
           return vm.xAxis(d.date);
         })
         .y1(function(d) {
-          return vm.yAxis(d.grid_energy);
+          return vm.yAxis(d.ecar_energy + d.grid_energy);
         });
 
       vm.areaPV = d3.area()
@@ -202,7 +209,8 @@
           return vm.xAxis(d.date);
         })
         .y1(function(d) {
-          return vm.yAxis(d.pv_energy);
+          // stacked on top of grid
+          return vm.yAxis(d.ecar_energy + d.grid_energy + d.pv_energy);
         });
 
       // var z = d3.scaleOrdinal(d3.schemeCategory10);
@@ -219,32 +227,36 @@
       var groupedData = []
 
       var previousTime;
+      var runningDate;
 
       for(var key in vm.logEntries) {
         var state = vm.logEntries[key];
         $log.log(state);
-        $log.log('previousTime before', previousTime);
-        $log.log('vm.runningDate before', vm.runningDate);
-        if(previousTime) {
-          var timeDiff = 900000;
-          $log.log('time diff', timeDiff);
-          vm.runningDate.setTime(vm.runningDate.getTime() + timeDiff);
-        } else {
-          vm.runningDate = new Date('2017-02-09T' + state.time + ':00+00:00');
-        }
-        previousTime = state.time;
-        $log.log('previousTime after', previousTime);
-        $log.log('vm.runningDate after', vm.runningDate);
+
+        // $log.log('previousTime before', previousTime);
+        // $log.log('vm.runningDate before', vm.runningDate);
+        // if(runningDate) {
+        //   var timeDiff = 900000;
+        //   $log.log('time diff', timeDiff);
+        //   runningDate.setTime(runningDate.getTime() + timeDiff);
+        // } else {
+        //   runningDate = new Date('2017-02-09T' + state.time + ':00+00:00');
+        // }
+        // previousTime = state.time;
+        // $log.log('previousTime after', previousTime);
+        // $log.log('vm.runningDate after', vm.runningDate);
 
         groupedData.push({
-          date: new Date(vm.runningDate.getTime()),
+          date: new Date(state.time),
           grid_energy: +state.grid_energy,
           pv_energy: +state.pv_energy,
+          ecar_energy: +state.ecar_energy,
           total_energy: +state.total_energy
         });
       }
-      if(groupedData.length > 4 * 24) {
-        groupedData.shift();
+      const DATA_LENGTH = 4 * 12;
+      if(groupedData.length > DATA_LENGTH) {
+        groupedData = groupedData.slice(groupedData.length - DATA_LENGTH, groupedData.length);
       }
       $log.log("grouped1 data: ", angular.toJson(groupedData));
 
@@ -259,12 +271,22 @@
         })
       ]);
 
-      vm.areaGrid.y0(vm.yAxis(0))
+      vm.areaECar.y0(function(d) {
+        return vm.yAxis(0);
+      })
         .curve(d3.curveCardinal.tension(0.5));
 
-      vm.areaPV.y0(function(d) {
-        return vm.yAxis(d.grid_energy);
-      }).curve(d3.curveCardinal.tension(0.5));
+      vm.areaGrid
+        .y0(function(d) {
+          return vm.yAxis(d.ecar_energy);
+        })
+        .curve(d3.curveCardinal.tension(0.5));
+
+      vm.areaPV
+        .y0(function(d) {
+          return vm.yAxis(d.ecar_energy + d.grid_energy);
+        })
+        .curve(d3.curveCardinal.tension(0.5));
 
       graph.append("g")
         .attr("class", "axis axis--x")
@@ -284,6 +306,21 @@
         .text("Energy (kWh)");
 
       $log.log("grouped2 data: ", angular.toJson(groupedData));
+
+      graph.append("path")
+        .datum(groupedData)
+        .attr("fill", "rgb(154,202,94)")
+        .attr("stroke", "rgb(81,81,81)")
+        .attr("stroke-width", 0.5)
+        .attr("d", vm.areaECar);
+
+      graph.append("path")
+        .datum(groupedData)
+        .attr("fill", "rgb(154,202,94)")
+        .attr("stroke", "rgb(81,81,81)")
+        .attr("stroke-width", 0.5)
+        .attr("d", vm.areaPV);
+
       graph.append("path")
         .datum(groupedData)
         .attr("fill", "rgb(205,53,84)")
@@ -293,21 +330,14 @@
 
       graph.append("path")
         .datum(groupedData)
-        .attr("fill", "rgb(154,202,94)")
+        .attr("fill", "none")
         .attr("stroke", "rgb(81,81,81)")
-        .attr("stroke-width", 0.5)
-        .attr("d", vm.areaPV);
-
-      // graph.append("path")
-      //   .datum(groupedData)
-      //   .attr("fill", "none")
-      //   .attr("stroke", "rgb(81,81,81)")
-      //   .attr("stroke-linejoin", "round")
-      //   .attr("stroke-linecap", "round")
-      //   .attr("stroke-width", 2)
-      //   .attr("d", function(d) {
-      //     return vm.line(d);
-      //   });
+        .attr("stroke-linejoin", "round")
+        .attr("stroke-linecap", "round")
+        .attr("stroke-width", 2)
+        .attr("d", function(d) {
+          return vm.line(d);
+        });
 
       $log.log("grouped data: ", groupedData);
 
