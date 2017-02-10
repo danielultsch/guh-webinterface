@@ -46,6 +46,11 @@
     vm.$onChanges = $onChanges;
     vm.refetch = refetch;
 
+    // vm.xAxis;
+    // vm.yAxis;
+    // vm.areaGrid;
+    // vm.areaPV;
+
     function $onInit() {
       $log.log("Hello Diagram", vm.logEntries, vm);
     }
@@ -56,6 +61,112 @@
     }
 
     function _refresh() {
+
+      // vm.logEntries = {
+      //   '00:00': {
+      //     '{d7379979-58f2-4318-8c2c-5cf0b7ec8aa7}': {
+      //       id: '{d7379979-58f2-4318-8c2c-5cf0b7ec8aa7}',
+      //       time: '00:00',
+      //       energy: 30
+      //     },
+      //     '{5bdd5dca-e475-4e5a-a7b4-6ee9310eb52a}': {
+      //       id: '{5bdd5dca-e475-4e5a-a7b4-6ee9310eb52a}',
+      //       time: '00:00',
+      //       energy: 70
+      //     },
+      //     '{d5e0f05f-119f-4f43-971e-f6f3cc800686}': {
+      //       id: '{d5e0f05f-119f-4f43-971e-f6f3cc800686}',
+      //       time: '00:00',
+      //       energy: 100
+      //     }
+      //   },
+      //   '00:15': {
+      //     '{d7379979-58f2-4318-8c2c-5cf0b7ec8aa7}': {
+      //       id: '{d7379979-58f2-4318-8c2c-5cf0b7ec8aa7}',
+      //       time: '00:15',
+      //       energy: 35
+      //     },
+      //     '{5bdd5dca-e475-4e5a-a7b4-6ee9310eb52a}': {
+      //       id: '{5bdd5dca-e475-4e5a-a7b4-6ee9310eb52a}',
+      //       time: '00:15',
+      //       energy: 65
+      //     },
+      //     '{d5e0f05f-119f-4f43-971e-f6f3cc800686}': {
+      //       id: '{d5e0f05f-119f-4f43-971e-f6f3cc800686}',
+      //       time: '00:15',
+      //       energy: 100
+      //     }
+      //   },
+      //   '00:30': {
+      //     '{d7379979-58f2-4318-8c2c-5cf0b7ec8aa7}': {
+      //       id: '{d7379979-58f2-4318-8c2c-5cf0b7ec8aa7}',
+      //       time: '00:30',
+      //       energy: 50
+      //     },
+      //     '{5bdd5dca-e475-4e5a-a7b4-6ee9310eb52a}': {
+      //       id: '{5bdd5dca-e475-4e5a-a7b4-6ee9310eb52a}',
+      //       time: '00:30',
+      //       energy: 70
+      //     },
+      //     '{d5e0f05f-119f-4f43-971e-f6f3cc800686}': {
+      //       id: '{d5e0f05f-119f-4f43-971e-f6f3cc800686}',
+      //       time: '00:30',
+      //       energy: 120
+      //     }
+      //   },
+      //   '00:45': {
+      //     '{d7379979-58f2-4318-8c2c-5cf0b7ec8aa7}': {
+      //       id: '{d7379979-58f2-4318-8c2c-5cf0b7ec8aa7}',
+      //       time: '00:45',
+      //       energy: 30
+      //     },
+      //     '{5bdd5dca-e475-4e5a-a7b4-6ee9310eb52a}': {
+      //       id: '{5bdd5dca-e475-4e5a-a7b4-6ee9310eb52a}',
+      //       time: '00:45',
+      //       energy: 20
+      //     },
+      //     '{d5e0f05f-119f-4f43-971e-f6f3cc800686}': {
+      //       id: '{d5e0f05f-119f-4f43-971e-f6f3cc800686}',
+      //       time: '00:45',
+      //       energy: 50
+      //     }
+      //   },
+      //   '01:00': {
+      //     '{d7379979-58f2-4318-8c2c-5cf0b7ec8aa7}': {
+      //       id: '{d7379979-58f2-4318-8c2c-5cf0b7ec8aa7}',
+      //       time: '01:00',
+      //       energy: 30
+      //     },
+      //     '{5bdd5dca-e475-4e5a-a7b4-6ee9310eb52a}': {
+      //       id: '{5bdd5dca-e475-4e5a-a7b4-6ee9310eb52a}',
+      //       time: '01:00',
+      //       energy: 80
+      //     },
+      //     '{d5e0f05f-119f-4f43-971e-f6f3cc800686}': {
+      //       id: '{d5e0f05f-119f-4f43-971e-f6f3cc800686}',
+      //       time: '01:00',
+      //       energy: 110
+      //     }
+      //   },
+      //   '01:15': {
+      //     '{d7379979-58f2-4318-8c2c-5cf0b7ec8aa7}': {
+      //       id: '{d7379979-58f2-4318-8c2c-5cf0b7ec8aa7}',
+      //       time: '01:15',
+      //       energy: 30
+      //     },
+      //     '{5bdd5dca-e475-4e5a-a7b4-6ee9310eb52a}': {
+      //       id: '{5bdd5dca-e475-4e5a-a7b4-6ee9310eb52a}',
+      //       time: '01:15',
+      //       energy: 70
+      //     },
+      //     '{d5e0f05f-119f-4f43-971e-f6f3cc800686}': {
+      //       id: '{d5e0f05f-119f-4f43-971e-f6f3cc800686}',
+      //       time: '01:15',
+      //       energy: 100
+      //     }
+      //   }
+      // };
+
       $log.log("refresh diagram", vm.logEntries);
 
       if(!vm.logEntries || vm.logEntries.length == 0) {
@@ -63,79 +174,119 @@
         return;
       }
 
-      // TODO: remove this filter for temperature values
-      vm.logEntries = vm.logEntries.filter(function(entry) {
-        return ["{6013402f-b5b1-46b3-8490-f0c20d62fe61}", "{14ec2781-cb04-4bbf-b097-7d01ef982630}", "{fefe5563-452f-4833-b5cf-49c3cc67c772}"].indexOf(entry.typeId) > -1;
-      });
-
       var svg = d3.select($element[0]).select("svg");
       var margin = {top: 20, right: 80, bottom: 30, left: 50};
       var width = svg.attr("width") - margin.left - margin.right;
       var height = svg.attr("height") - margin.top - margin.bottom;
+      d3.selectAll("g").remove();
       var graph = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
       // scale styles
-      var x = d3.scaleTime()
+      vm.xAxis = d3.scaleTime()
         .rangeRound([0, width]);
 
-      var y = d3.scaleLinear()
+      vm.yAxis = d3.scaleLinear()
         .rangeRound([height, 0]);
 
-      var z = d3.scaleOrdinal(d3.schemeCategory10);
-
-      var line = d3.line()
+      vm.areaGrid = d3.area()
         .x(function(d) {
-          return x(new Date(d.timestamp));
+          return vm.xAxis(new Date('2017-02-09T' + d.time + ':00+00:00'));
         })
-        .y(function(d) {
-          if(isNaN(+d.value)) {
-            return 0;
-          }
-          return y(+d.value);
+        .y1(function(d) {
+          return vm.yAxis(d.grid_energy);
         });
 
-      var groupedData = d3.nest()
-        .key(function(d) {return d.typeId;})
-        .entries(vm.logEntries);
+      vm.areaPV = d3.area()
+        .x(function(d) {
+          return vm.xAxis(new Date('2017-02-09T' + d.time + ':00+00:00'));
+        })
+        .y1(function(d) {
+          return vm.yAxis(d.pv_energy);
+        });
 
-      x.domain(d3.extent(vm.logEntries, function(d) {
-        return new Date(d.timestamp);
+      // var z = d3.scaleOrdinal(d3.schemeCategory10);
+
+      vm.line = d3.line()
+        .x(function(d) {
+          $log.log('line d:', d);
+          return vm.xAxis(new Date('2017-02-09T' + d.time + ':00+00:00'));
+        })
+        .y(function(d) {
+          return d.total_energy;
+        });
+
+      var groupedData = []
+
+      for(var key in vm.logEntries) {
+        var state = vm.logEntries[key];
+        $log.log(state);
+        groupedData.push({
+          time: state.time,
+          grid_energy: +state.grid_energy,
+          pv_energy: +state.pv_energy,
+          total_energy: +state.total_energy
+        });
+      }
+      $log.log("grouped1 data: ", angular.toJson(groupedData));
+
+      vm.xAxis.domain(d3.extent(groupedData, function(d) {
+        return new Date('2017-02-09T' + d.time + ':00+00:00');
       }));
 
-      y.domain([
-        d3.min(vm.logEntries, function(c) { return (isNaN(+c.value)) ? 0 : +c.value}),
-        d3.max(vm.logEntries, function(c) { return (isNaN(+c.value)) ? 0 : +c.value})
+      vm.yAxis.domain([
+        0,
+        d3.max(groupedData, function(c) {
+          return c.total_energy
+        })
       ]);
 
-      $log.log("grouped Data: before z domain ", groupedData);
+      vm.areaGrid.y0(vm.yAxis(0));
 
-      z.domain(groupedData.map(function(c) { $log.log(c.key, c); return c.key; }));
+      vm.areaPV.y0(function(d) {
+        return vm.yAxis(d.grid_energy);
+      });
+
+      $log.log(vm.areaGrid);
+      $log.log(vm.areaPV);
 
       graph.append("g")
         .attr("class", "axis axis--x")
         .attr("transform", "translate(0," + height + ")")
-        .call(d3.axisBottom(x));
+        .call(d3.axisBottom(vm.xAxis));
 
       graph.append("g")
         .attr("class", "axis axis--y")
-        .call(d3.axisLeft(y))
+        .call(d3.axisLeft(vm.yAxis))
         .append("text")
         .attr("fill", "#000")
         .attr("transform", "rotate(-90)")
         .attr("y", 6)
         .attr("dy", "0.71em")
         .style("text-anchor", "end")
-        .text("Temperature (°C)");
+        .text("Energy (kWh)");
 
-      var temperature = graph.selectAll(".temperature")
-        .data(groupedData)
-        .enter().append("g")
-        .attr("class", "temperature");
+      $log.log("grouped2 data: ", angular.toJson(groupedData));
+      graph.append("path")
+        .datum(groupedData)
+        .attr("fill", "red")
+        .attr("d", vm.areaGrid);
 
-      temperature.append("path")
-        .attr("class", "line")
-        .attr("d", function(d) { return line(d.values); })
-        .style("stroke", function(d) { return z(d.key); });
+      graph.append("path")
+        .datum(groupedData)
+        .attr("fill", "steelblue")
+        .attr("d", vm.areaPV);
+
+      graph.append("path")
+        .datum(groupedData)
+        .attr("fill", "none")
+        .attr("stroke", "black")
+        .attr("stroke-linejoin", "round")
+        .attr("stroke-linecap", "round")
+        .attr("stroke-width", 5)
+        .attr("d", function(d) {
+          $log.log("d data: ", d);
+          return vm.line(d);
+        });
 
       $log.log("grouped data: ", groupedData);
 

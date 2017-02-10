@@ -29,7 +29,7 @@
     .module('guh.containers')
     .controller('ThingDetailsCtrl', ThingDetailsCtrl);
 
-  ThingDetailsCtrl.$inject = ['app', 'libs', '$log', '$scope', '$filter', '$state', '$stateParams', 'DSDevice', 'DSDeviceClass', 'DSParamType', 'DSState', 'DSRule', 'DSLogging', 'NavigationBar', 'ActionBar', 'ModalContainer'];
+  ThingDetailsCtrl.$inject = ['app', 'libs', '$log', '$scope', '$filter', '$state', '$stateParams', 'DSDevice', 'DSDeviceClass', 'DSParamType', 'DSState', 'DSRule', 'NavigationBar', 'ActionBar', 'ModalContainer'];
 
   /**
    * @ngdoc controller
@@ -37,7 +37,7 @@
    * @description Container component for a single thing.
    *
    */
-  function ThingDetailsCtrl(app, libs, $log, $scope, $filter, $state, $stateParams, DSDevice, DSDeviceClass, DSParamType, DSState, DSRule, DSLogging, NavigationBar, ActionBar, ModalContainer) {
+  function ThingDetailsCtrl(app, libs, $log, $scope, $filter, $state, $stateParams, DSDevice, DSDeviceClass, DSParamType, DSState, DSRule, NavigationBar, ActionBar, ModalContainer) {
     
     var vm = this;
     var device;
@@ -45,7 +45,7 @@
     vm.showActions = true;
     vm.showStates = false;
     vm.showSettings = false;
-    vm.logEntries = [];
+    vm.logEntries = {};
 
     vm.$onInit = $onInit;
     vm.back = back;
@@ -55,13 +55,41 @@
 
     vm.updateLogEntries = updateLogEntries;
 
+
+    const TIME_STATE_ID = '{f7822921-8179-48af-9d99-c9a084b06316}';
+    const PV_ENERGY_STATE_ID = '{d7379979-58f2-4318-8c2c-5cf0b7ec8aa7}';
+    const GRID_ENERGY_STATE_ID = '{5bdd5dca-e475-4e5a-a7b4-6ee9310eb52a}';
+    const TOTAL_ENERGY_STATE_ID = '{d5e0f05f-119f-4f43-971e-f6f3cc800686}';
+
     function updateLogEntries() {
-      $log.log("updateLogEntries");
-      $log.log('guh.controller.ThingDetailsCtrl deviceIds: ', {deviceIds: [vm.id]});
-      DSLogging.getLogEntries({deviceIds: [vm.id]}).then(function(fetchedLogEntries) {
-        $log.log('guh.controller.ThingDetailsCtrl fetchedLogEntries: ', fetchedLogEntries.logEntries);
-        vm.logEntries = fetchedLogEntries.logEntries;
+      $log.log("updateLogEntries", vm.states);
+
+      if(!vm.states) {
+        return;
+      }
+
+      var timeState = vm.states.filter(function(state) {
+        return [TIME_STATE_ID].indexOf(state.stateTypeId) > -1;
       });
+
+      var time = timeState[0].value;
+
+      if(!vm.logEntries.hasOwnProperty(time)) {
+        vm.logEntries[time] = {};
+        vm.logEntries[time].time = time;
+      }
+
+      angular.forEach(vm.states, function(state, index) {
+        if(PV_ENERGY_STATE_ID == state.stateTypeId) {
+          vm.logEntries[time]['pv_energy'] = state.value;
+        } else if(GRID_ENERGY_STATE_ID == state.stateTypeId) {
+          vm.logEntries[time]['grid_energy'] = state.value;
+        } else if(TOTAL_ENERGY_STATE_ID == state.stateTypeId) {
+          vm.logEntries[time]['total_energy'] = state.value;
+        }
+      });
+      $log.log('trigger log Entries change ', vm.logEntries);
+      vm.logEntries = angular.copy(vm.logEntries);
     }
 
     function $onInit() {
@@ -350,7 +378,6 @@
       return false;
     }
 
-
     DSState.on('DS.change', function(DSState, newState) {
       // States
       angular.forEach(vm.states, function(state, index) {
@@ -358,6 +385,10 @@
           vm.states[index].value = $filter('number')(newState.value, '2');
         }
       });
+      // do not update the whole diagram for every new state value
+      if(newState.stateTypeId === TIME_STATE_ID) {
+        vm.updateLogEntries();
+      }
     });
 
   }

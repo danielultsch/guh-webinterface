@@ -33,6 +33,7 @@
     <div class="State__value" ng-switch-default>{{ state.value }} {{ state.stateType.unit | unit }}</div>
     <div class="State__name">{{ state.stateType.name }}</div>
   </div>
+  <guh-diagram log-entries="thingDetails.logEntries" on-refetch="thingDetails.updateLogEntries()"></guh-diagram>
 </div>
 
 <div class="ThingDetails__content" ng-show="thingDetails.showSettings">

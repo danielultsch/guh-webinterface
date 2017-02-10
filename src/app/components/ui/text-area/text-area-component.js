@@ -39,7 +39,7 @@
       },
       controller: 'TextAreaCtrl',
       controllerAs: 'textArea',
-      templateUrl: 'app/components/ui/text-area/text-area.html'
+      templateUrl: 'app/components/ui/text-areaGrid/text-areaGrid.html'
     });
 
 }());
