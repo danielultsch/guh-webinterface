@@ -46,6 +46,7 @@
     vm.$onChanges = $onChanges;
     vm.refetch = refetch;
 
+    vm.runningDate = new Date();
     // vm.xAxis;
     // vm.yAxis;
     // vm.areaGrid;
@@ -190,7 +191,7 @@
 
       vm.areaGrid = d3.area()
         .x(function(d) {
-          return vm.xAxis(new Date('2017-02-09T' + d.time + ':00+00:00'));
+          return vm.xAxis(d.date);
         })
         .y1(function(d) {
           return vm.yAxis(d.grid_energy);
@@ -198,7 +199,7 @@
 
       vm.areaPV = d3.area()
         .x(function(d) {
-          return vm.xAxis(new Date('2017-02-09T' + d.time + ':00+00:00'));
+          return vm.xAxis(d.date);
         })
         .y1(function(d) {
           return vm.yAxis(d.pv_energy);
@@ -208,29 +209,47 @@
 
       vm.line = d3.line()
         .x(function(d) {
-          $log.log('line d:', d);
-          return vm.xAxis(new Date('2017-02-09T' + d.time + ':00+00:00'));
+          return vm.xAxis(d.date);
         })
         .y(function(d) {
           return d.total_energy;
-        });
+        })
+        .curve(d3.curveCardinal.tension(0.5));
 
       var groupedData = []
+
+      var previousTime;
 
       for(var key in vm.logEntries) {
         var state = vm.logEntries[key];
         $log.log(state);
+        $log.log('previousTime before', previousTime);
+        $log.log('vm.runningDate before', vm.runningDate);
+        if(previousTime) {
+          var timeDiff = 900000;
+          $log.log('time diff', timeDiff);
+          vm.runningDate.setTime(vm.runningDate.getTime() + timeDiff);
+        } else {
+          vm.runningDate = new Date('2017-02-09T' + state.time + ':00+00:00');
+        }
+        previousTime = state.time;
+        $log.log('previousTime after', previousTime);
+        $log.log('vm.runningDate after', vm.runningDate);
+
         groupedData.push({
-          time: state.time,
+          date: new Date(vm.runningDate.getTime()),
           grid_energy: +state.grid_energy,
           pv_energy: +state.pv_energy,
           total_energy: +state.total_energy
         });
       }
+      if(groupedData.length > 4 * 24) {
+        groupedData.shift();
+      }
       $log.log("grouped1 data: ", angular.toJson(groupedData));
 
       vm.xAxis.domain(d3.extent(groupedData, function(d) {
-        return new Date('2017-02-09T' + d.time + ':00+00:00');
+        return d.date;
       }));
 
       vm.yAxis.domain([
@@ -240,25 +259,24 @@
         })
       ]);
 
-      vm.areaGrid.y0(vm.yAxis(0));
+      vm.areaGrid.y0(vm.yAxis(0))
+        .curve(d3.curveCardinal.tension(0.5));
 
       vm.areaPV.y0(function(d) {
         return vm.yAxis(d.grid_energy);
-      });
-
-      $log.log(vm.areaGrid);
-      $log.log(vm.areaPV);
+      }).curve(d3.curveCardinal.tension(0.5));
 
       graph.append("g")
         .attr("class", "axis axis--x")
         .attr("transform", "translate(0," + height + ")")
+        .attr("fill", "rgb(110,110,110)")
         .call(d3.axisBottom(vm.xAxis));
 
       graph.append("g")
         .attr("class", "axis axis--y")
         .call(d3.axisLeft(vm.yAxis))
         .append("text")
-        .attr("fill", "#000")
+        .attr("fill", "rgb(110,110,110)")
         .attr("transform", "rotate(-90)")
         .attr("y", 6)
         .attr("dy", "0.71em")
@@ -268,25 +286,28 @@
       $log.log("grouped2 data: ", angular.toJson(groupedData));
       graph.append("path")
         .datum(groupedData)
-        .attr("fill", "red")
+        .attr("fill", "rgb(205,53,84)")
+        .attr("stroke", "rgb(81,81,81)")
+        .attr("stroke-width", 0.5)
         .attr("d", vm.areaGrid);
 
       graph.append("path")
         .datum(groupedData)
-        .attr("fill", "steelblue")
+        .attr("fill", "rgb(154,202,94)")
+        .attr("stroke", "rgb(81,81,81)")
+        .attr("stroke-width", 0.5)
         .attr("d", vm.areaPV);
 
-      graph.append("path")
-        .datum(groupedData)
-        .attr("fill", "none")
-        .attr("stroke", "black")
-        .attr("stroke-linejoin", "round")
-        .attr("stroke-linecap", "round")
-        .attr("stroke-width", 5)
-        .attr("d", function(d) {
-          $log.log("d data: ", d);
-          return vm.line(d);
-        });
+      // graph.append("path")
+      //   .datum(groupedData)
+      //   .attr("fill", "none")
+      //   .attr("stroke", "rgb(81,81,81)")
+      //   .attr("stroke-linejoin", "round")
+      //   .attr("stroke-linecap", "round")
+      //   .attr("stroke-width", 2)
+      //   .attr("d", function(d) {
+      //     return vm.line(d);
+      //   });
 
       $log.log("grouped data: ", groupedData);
 

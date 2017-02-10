@@ -57,7 +57,7 @@
 
 
     const TIME_STATE_ID = '{f7822921-8179-48af-9d99-c9a084b06316}';
-    const PV_ENERGY_STATE_ID = '{d7379979-58f2-4318-8c2c-5cf0b7ec8aa7}';
+    const PV_ENERGY_STATE_ID = '{eef0526d-4901-4197-bde1-f2e5829fc8c3}';
     const GRID_ENERGY_STATE_ID = '{5bdd5dca-e475-4e5a-a7b4-6ee9310eb52a}';
     const TOTAL_ENERGY_STATE_ID = '{d5e0f05f-119f-4f43-971e-f6f3cc800686}';
 
