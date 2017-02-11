@@ -44,64 +44,81 @@
 </style>
 
 <div class="ThingDetails__content">
-  <div class="Household__savings-container">
-    <div class="Household__savings-headline">
-      savings
-    </div>
-    <div class="Household__savings">
-      <div class="Household__savings-amount">
-        <span class="Household__savings-plus">+</span><span>{{ thingDetails.savings.value }}</span><span
-              class="Household__savings-euro">&euro;</span>
+  <div class="Household__data-container">
+    <div class="Household__savings-container">
+      <div class="Household__savings-headline">
+        savings
       </div>
-      <span class="Household__subtitle">daily</span>
-    </div>
-    <div class="Household__savings">
-      <div class="Household__savings-amount">
-        <span class="Household__savings-plus">+</span><span>{{ thingDetails.annualSavings.value }}</span><span
-              class="Household__savings-euro">&euro;</span>
+      <div class="Household__savings">
+        <div class="Household__savings-amount">
+          <span class="Household__savings-plus">+</span><span>{{ thingDetails.savings.value }}</span><span
+                class="Household__savings-euro">&euro;</span>
+        </div>
+        <div class="Household__subtitle-container">
+          <span class="Household__subtitle">daily</span>
+        </div>
       </div>
-      <span class="Household__subtitle">est. annual</span>
+      <div class="Household__savings" ng-if="thingDetails.annualSavings.value">
+        <div class="Household__savings-amount">
+          <span class="Household__savings-plus">+</span><span>{{ thingDetails.annualSavings.value }}</span><span
+                class="Household__savings-euro">&euro;</span>
+        </div>
+        <div class="Household__subtitle-container">
+          <span class="Household__subtitle">est. annual</span>
+        </div>
+      </div>
+      <div class="Household__time">
+        {{ thingDetails.time.value }}
+      </div>
     </div>
-    <div class="Household__time">
-      {{ thingDetails.time.value }}
-    </div>
-  </div>
-  <div class="Household__status-container">
-    <table class="Household__status-table">
-      <tr>
-        <th class="Household__status-table-label"></th>
-        <th>kWh</th>
-        <th>&euro;</th>
-      </tr>
-      <tr>
-        <td class="Household__status-table-label">PV</td>
-        <td>{{ thingDetails.pvEnergy.value }}</td>
-        <td>{{ thingDetails.pvCosts.value }}</td>
-      </tr>
-      <tr>
-        <td class="Household__status-table-label">GRID</td>
-        <td>{{ thingDetails.gridEnergy.value }}</td>
-        <td>{{ thingDetails.gridCosts.value }}</td>
-      </tr>
-      <tr>
-        <td class="Household__status-table-label">E-CAR</td>
-        <td>{{ thingDetails.eCarEnergy.value }}</td>
-        <td>{{ thingDetails.eCarCosts.value }}</td>
-      </tr>
-      <tr>
-        <td colspan="3">
+    <div class="Household__status-container">
+      <table class="Household__status-table">
+        <tr>
+          <th class="Household__status-table-label"></th>
+          <th>kWh</th>
+          <th>&euro;</th>
+        </tr>
+        <tr>
+          <td class="Household__status-table-label">PV</td>
+          <td>{{ thingDetails.pvEnergy.value }}</td>
+          <td>{{ thingDetails.pvCosts.value }}</td>
+        </tr>
+        <tr>
+          <td class="Household__status-table-label">GRID</td>
+          <td>{{ thingDetails.gridEnergy.value }}</td>
+          <td>{{ thingDetails.gridCosts.value }}</td>
+        </tr>
+        <tr>
+          <td class="Household__status-table-label">E-CAR</td>
+          <td>{{ thingDetails.eCarEnergy.value }}</td>
+          <td>{{ thingDetails.eCarCosts.value }}</td>
+        </tr>
+        <tr>
+          <td colspan="3">
           <span class="Household__status-table-24hours-label">
             <svg>
               <use xlink:href="./assets/svg/ui/ui.symbol.svg#clock"></use>
             </svg>24 Hours</span>
-        </td>
-      </tr>
-    </table>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="Household__diagram-container">
+    <guh-diagram log-entries="thingDetails.logEntries" on-refetch="thingDetails.updateLogEntries()"></guh-diagram>
   </div>
 </div>
 
-<guh-diagram log-entries="thingDetails.logEntries" on-refetch="thingDetails.updateLogEntries()"></guh-diagram>
+<div class="Household__action-container">
+  <div class="Household__mode-action-container" ng-class="['Household__mode-action-'+thingDetails.modeState.value]">
+    <guh-action action-type="thingDetails.modeAction.actionType" corresponding-state="thingDetails.modeAction.state"
+                device="thingDetails.device"></guh-action>
+  </div>
 
-<p ng-if="thingDetails.actions.length === 0">This thing doesn't have any controls.</p>
-<guh-action action-type="action.actionType" corresponding-state="action.state" device="thingDetails.device"
-            ng-repeat="action in thingDetails.actions | orderBy: 'name' track by $index"></guh-action>
+  <div class="Household__trading-action-container" ng-class="['Household__trading-action-'+thingDetails.tradingState.value]">
+    <guh-action action-type="thingDetails.tradingAction.actionType"
+                corresponding-state="thingDetails.tradingAction.state"
+                device="thingDetails.device"></guh-action>
+  </div>
+</div>

@@ -66,6 +66,12 @@
     vm.totalCosts = null;
     vm.totalEnergy = null;
 
+    vm.modeAction = null;
+    vm.modeState = null;
+    vm.tradingAction = null;
+    vm.tradingState = null;
+
+
     const E_CAR_COSTS_STATE_ID = '{d7379979-58f2-4318-8c2c-5cf0b7ec8aa7}';
     const E_CAR_ENERGY_STATE_ID = '{32ebbcc7-ec3d-4e7d-bc38-d29bd75a4bac}';
     const GRID_CONSTS_STATE_ID = '{1f1e6d91-5969-45e3-ae5c-cabc2cbc4e55}';
@@ -76,6 +82,9 @@
     const TIME_STATE_ID = '{f7822921-8179-48af-9d99-c9a084b06316}';
     const TOTAL_COSTS_STATE_ID = '{6feff3d2-b7d2-404f-8fb0-d06a57ae50c6}';
     const TOTAL_ENERGY_STATE_ID = '{d5e0f05f-119f-4f43-971e-f6f3cc800686}';
+
+    const MODE_ACTION_ID = '{a4c2d533-477d-4e1c-b3d0-049042c03f3c}';
+    const TRADING_ACTION_ID = '{a4c9b941-a979-4804-97e2-354ad3af8858}';
 
     function updateLogEntries() {
       $log.log("updateLogEntries", vm.states);
@@ -122,10 +131,10 @@
             vm.savings = state;
             break;
           case TIME_STATE_ID:
-            vm.time= state;
+            vm.time = state;
             break;
           case TOTAL_COSTS_STATE_ID:
-            vm.totalCosts= state;
+            vm.totalCosts = state;
             break;
           case TOTAL_ENERGY_STATE_ID:
             vm.logEntries[time]['total_energy'] = state.value;
@@ -215,17 +224,14 @@
         vm.statesObject[$filter('camelCase')(state.stateType.name)] = vm.states[index];
       });
 
-      $log.log('templateUrl check:', device.deviceClassId);
       // Wait for templateUrl check
       device.deviceClass.templateUrl
         .then(function(fileExists) {
-          $log.log('templateUrl file eXists:', fileExists);
           if(device.deviceClassId == '{6a1d6ea5-3974-4f20-9c66-e95456e5ba90}') {
             vm.templateUrl = 'app/containers/thing-details/device-class-templates/template-household.html';
           } else {
             vm.templateUrl = fileExists;
           }
-          $log.log('templateUrl:' , vm.templateUrl);
         })
         .catch(function(error) {
           $log.error('guh.controller.ThingDetailsCtrl', error);
@@ -233,7 +239,6 @@
         .finally(function() {
           vm.templateReady = true;
         });
-      $log.log('templateUrl:' , vm.templateUrl);
 
       // Actions
       var actionTypes = DSDeviceClass.getAllActionTypes(device.deviceClassId);
@@ -253,15 +258,22 @@
           action.state = state;
           action.stateType = stateType;
 
-          // Remove state from sates array
+          // Remove state from steates array
           vm.states = vm.states.filter(function(state) {
             return state.stateType.id !== actionType.id;
           });
+
+          switch(actionType.id) {
+            case MODE_ACTION_ID:
+              vm.modeAction = action;
+              vm.modeState = state;
+              break;
+            case TRADING_ACTION_ID:
+              vm.tradingAction = action;
+              vm.tradingState = state;
+              break;
+          }
         }
-        $log.log(action);
-        // if(action.actionTypeId) {
-        //
-        // }
 
         vm.actions.push(action);
         vm.actionsObject[$filter('camelCase')(actionType.name)] = action;
@@ -436,12 +448,20 @@
     }
 
     DSState.on('DS.change', function(DSState, newState) {
+
       // States
       angular.forEach(vm.states, function(state, index) {
         if(state.stateType.type === app.basicTypes.double && state.stateType.id === newState.stateType.id) {
           vm.states[index].value = $filter('number')(newState.value, '2');
         }
       });
+
+      if(MODE_ACTION_ID == newState.stateTypeId) {
+        vm.modeState = newState;
+      }
+      if(TRADING_ACTION_ID == newState.stateTypeId) {
+        vm.tradingState = newState;
+      }
       // do not update the whole diagram for every new state value
       if(newState.stateTypeId === TIME_STATE_ID) {
         vm.updateLogEntries();

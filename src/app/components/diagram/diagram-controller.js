@@ -226,25 +226,9 @@
 
       var groupedData = []
 
-      var previousTime;
-      var runningDate;
-
       for(var key in vm.logEntries) {
         var state = vm.logEntries[key];
         $log.log(state);
-
-        // $log.log('previousTime before', previousTime);
-        // $log.log('vm.runningDate before', vm.runningDate);
-        // if(runningDate) {
-        //   var timeDiff = 900000;
-        //   $log.log('time diff', timeDiff);
-        //   runningDate.setTime(runningDate.getTime() + timeDiff);
-        // } else {
-        //   runningDate = new Date('2017-02-09T' + state.time + ':00+00:00');
-        // }
-        // previousTime = state.time;
-        // $log.log('previousTime after', previousTime);
-        // $log.log('vm.runningDate after', vm.runningDate);
 
         groupedData.push({
           date: new Date(state.time),
@@ -255,8 +239,21 @@
         });
       }
       const DATA_LENGTH = 4 * 12;
+      const TIME_INTERVAL = 15 * 60 * 1000;
       if(groupedData.length > DATA_LENGTH) {
         groupedData = groupedData.slice(groupedData.length - DATA_LENGTH, groupedData.length);
+      } else if(groupedData.length < DATA_LENGTH && groupedData.length > 0) {
+        var earlierDate =  new Date(groupedData[0].date.getTime() - TIME_INTERVAL);
+        while(groupedData.length < DATA_LENGTH) {
+          groupedData.unshift({
+            date: earlierDate,
+            grid_energy: 0,
+            pv_energy: 0,
+            ecar_energy: 0,
+            total_energy: 0
+          })
+          earlierDate = new Date(earlierDate.getTime() - TIME_INTERVAL);
+        }
       }
       $log.log("grouped1 data: ", angular.toJson(groupedData));
 
