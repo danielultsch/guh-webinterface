@@ -49,12 +49,12 @@
 <div class="ThingDetails__content">
   <div class="Household__data-container">
     <div class="Household__savings-container">
-      <div class="Household__savings-headline">
+      <div class="Household__savings-headline" ng-if="thingDetails.savings.value || thingDetails.annualSavings.value">
         savings
       </div>
-      <div class="Household__savings">
+      <div class="Household__savings" ng-if="thingDetails.savings.value">
         <div class="Household__savings-amount">
-          <span class="Household__savings-plus">+</span><span>{{ thingDetails.savings.value | number:2 }}</span><span
+          <span class="Household__savings-plus" ng-if="thingDetails.savings.value">+</span><span>{{ thingDetails.savings.value | number:2 }}</span><span
                 class="Household__savings-euro">&euro;</span>
         </div>
         <div class="Household__subtitle-container">
@@ -70,7 +70,7 @@
           <span class="Household__subtitle">est. annual</span>
         </div>
       </div>
-      <div class="Household__time" *ng-if="thingDetails.time.value">
+      <div class="Household__time">
         {{ (thingDetails.time.value * 1000) | date : 'HH:mm'}}
       </div>
     </div>
@@ -92,9 +92,9 @@
           <td>{{ thingDetails.gridCosts.value | number:2 }}</td>
         </tr>
         <tr>
-          <td class="Household__status-table-label">E-CAR</td>
-          <td>{{ thingDetails.eCarEnergy.value | number:2 }}</td>
-          <td>{{ thingDetails.eCarCosts.value | number:2 }}</td>
+          <td class="Household__status-table-label">SOLD</td>
+          <td>{{ thingDetails.eCarEnergySold.value | number:2 }}</td>
+          <td>{{ thingDetails.eCarCostsEarned.value | number:2 }}</td>
         </tr>
         <tr>
           <td colspan="3">
@@ -108,18 +108,23 @@
     </div>
   </div>
 
-  <div class="Household__diagram-container">
-    <guh-diagram log-entries="thingDetails.logEntries" on-refetch="thingDetails.updateLogEntries()"></guh-diagram>
+  <div class="ECar__battery-container">
+    <div id="battery-loading-container">
+      <div id="battery-loading" ng-style="{width: thingDetails.eCarPercentage.value + '%' }"></div>
+    </div>
+    <svg>
+      <use xlink:href="./assets/svg/ui/ui.symbol.svg#battery-empty"></use>
+    </svg>
   </div>
 </div>
 
 <div class="Household__action-container">
-  <div class="Household__mode-action-container" ng-class="['Household__mode-action-'+thingDetails.modeState.value]">
+  <div class="Household__mode-action-container" *ng-if="thingDetails.modeAction" ng-class="['Household__mode-action-'+thingDetails.modeState.value]">
     <guh-action action-type="thingDetails.modeAction.actionType" corresponding-state="thingDetails.modeAction.state"
                 device="thingDetails.device"></guh-action>
   </div>
 
-  <div class="Household__trading-action-container" ng-class="['Household__trading-action-'+thingDetails.tradingState.value]">
+  <div class="ECar__trading-action-container" *ng-if="thingDetails.tradingAction" ng-class="['Household__trading-action-'+thingDetails.tradingState.value]">
     <guh-action action-type="thingDetails.tradingAction.actionType"
                 corresponding-state="thingDetails.tradingAction.state"
                 device="thingDetails.device"></guh-action>

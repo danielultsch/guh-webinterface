@@ -65,6 +65,9 @@
     vm.time = null;
     vm.totalCosts = null;
     vm.totalEnergy = null;
+    vm.eCarPercentage = null;
+    vm.eCarEnergySold = null;
+    vm.eCarCostsEarned = null;
 
     vm.modeAction = null;
     vm.modeState = null;
@@ -82,12 +85,15 @@
     const TIME_STATE_ID = '{f7822921-8179-48af-9d99-c9a084b06316}';
     const TOTAL_COSTS_STATE_ID = '{6feff3d2-b7d2-404f-8fb0-d06a57ae50c6}';
     const TOTAL_ENERGY_STATE_ID = '{d5e0f05f-119f-4f43-971e-f6f3cc800686}';
+    const E_CAR_PERCENTAGE_STATE_ID = '{bc70edc4-ec9a-4674-a40d-14bffab0f804}';
+    const E_CAR_ENERGY_SOLD_STATE_ID = '{5e574072-551c-4cdc-aae2-d786fb30f118}';
+    const E_CAR_COSTS_EARNED_STATE_ID = '{83da16b7-35fe-45f9-882f-52703f3291e4}';
 
     const MODE_ACTION_ID = '{a4c2d533-477d-4e1c-b3d0-049042c03f3c}';
     const TRADING_ACTION_ID = '{a4c9b941-a979-4804-97e2-354ad3af8858}';
 
     function updateLogEntries() {
-      $log.log("updateLogEntries", vm.states);
+      // $log.log("updateLogEntries", vm.states);
 
       if(!vm.states) {
         return;
@@ -140,9 +146,18 @@
             vm.logEntries[time]['total_energy'] = state.value;
             vm.totalEnergy = state;
             break;
+          case E_CAR_PERCENTAGE_STATE_ID:
+            vm.eCarPercentage = state;
+            break;
+          case E_CAR_ENERGY_SOLD_STATE_ID:
+            vm.eCarEnergySold = state;
+            break;
+          case E_CAR_COSTS_EARNED_STATE_ID:
+            vm.eCarCostsEarned = state;
+            break;
         }
       });
-      $log.log('trigger log Entries change ', vm.logEntries);
+      // $log.log('trigger log Entries change ', vm.logEntries);
       vm.logEntries = angular.copy(vm.logEntries);
     }
 
@@ -189,7 +204,7 @@
     }
 
     function _initThing(device) {
-      $log.log('guh.controller.ThingDetailsCtrl initThing: ', device);
+      // $log.log('guh.controller.ThingDetailsCtrl initThing: ', device);
       vm.device = device;
       vm.setupComplete = device.setupComplete;
       vm.actions = [];
@@ -229,9 +244,12 @@
         .then(function(fileExists) {
           if(device.deviceClassId == '{6a1d6ea5-3974-4f20-9c66-e95456e5ba90}') {
             vm.templateUrl = 'app/containers/thing-details/device-class-templates/template-household.html';
+          } else if(device.deviceClassId == '{9e635cd5-35fd-4606-9708-559fa443f1a6}') {
+            vm.templateUrl = 'app/containers/thing-details/device-class-templates/template-ecar.html';
           } else {
             vm.templateUrl = fileExists;
           }
+
         })
         .catch(function(error) {
           $log.error('guh.controller.ThingDetailsCtrl', error);
@@ -451,7 +469,7 @@
 
       // States
       angular.forEach(vm.states, function(state, index) {
-        if(state.stateType.type === app.basicTypes.double && state.stateType.id === newState.stateType.id) {
+        if(newState.deviceId === device.id && state.stateType.type === app.basicTypes.double && state.stateType.id === newState.stateType.id) {
           vm.states[index].value = $filter('number')(newState.value, '2');
         }
       });

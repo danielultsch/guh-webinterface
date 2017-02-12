@@ -52,11 +52,11 @@
     // vm.areaPV;
 
     function $onInit() {
-      $log.log("Hello Diagram", vm.logEntries, vm);
+      // $log.log("Hello Diagram", vm.logEntries, vm);
     }
 
     function $postLink() {
-      $log.log("post Link", vm.logEntries);
+      // $log.log("post Link", vm.logEntries);
       _refresh();
     }
 
@@ -167,10 +167,10 @@
       //   }
       // };
 
-      $log.log("refresh diagram", vm.logEntries);
+      // $log.log("refresh diagram", vm.logEntries);
 
       if(!vm.logEntries || vm.logEntries.length == 0) {
-        $log.log("no log entries", vm.logEntries);
+        // $log.log("no log entries", vm.logEntries);
         return;
       }
 
@@ -228,10 +228,10 @@
 
       for(var key in vm.logEntries) {
         var state = vm.logEntries[key];
-        $log.log(state);
+        // $log.log(state);
 
         groupedData.push({
-          date: new Date(state.time),
+          date: new Date(state.time * 1000),
           grid_energy: +state.grid_energy,
           pv_energy: +state.pv_energy,
           ecar_energy: +state.ecar_energy,
@@ -251,11 +251,11 @@
             pv_energy: 0,
             ecar_energy: 0,
             total_energy: 0
-          })
+          });
           earlierDate = new Date(earlierDate.getTime() - TIME_INTERVAL);
         }
       }
-      $log.log("grouped1 data: ", angular.toJson(groupedData));
+      // $log.log("grouped1 data: ", angular.toJson(groupedData));
 
       vm.xAxis.domain(d3.extent(groupedData, function(d) {
         return d.date;
@@ -271,19 +271,19 @@
       vm.areaECar.y0(function(d) {
         return vm.yAxis(0);
       })
-        .curve(d3.curveCardinal.tension(0.5));
+        .curve(d3.curveMonotoneX);
 
       vm.areaGrid
         .y0(function(d) {
           return vm.yAxis(d.ecar_energy);
         })
-        .curve(d3.curveCardinal.tension(0.5));
+        .curve(d3.curveMonotoneX);
 
       vm.areaPV
         .y0(function(d) {
           return vm.yAxis(d.ecar_energy + d.grid_energy);
         })
-        .curve(d3.curveCardinal.tension(0.5));
+        .curve(d3.curveMonotoneX);
 
       graph.append("g")
         .attr("class", "axis axis--x")
@@ -302,55 +302,55 @@
         .style("text-anchor", "end")
         .text("Energy (kWh)");
 
-      $log.log("grouped2 data: ", angular.toJson(groupedData));
+      // $log.log("grouped2 data: ", angular.toJson(groupedData));
 
       graph.append("path")
         .datum(groupedData)
-        .attr("fill", "rgb(154,202,94)")
+        .attr("fill", "rgb(116,176,166)")
         .attr("stroke", "rgb(81,81,81)")
         .attr("stroke-width", 0.5)
         .attr("d", vm.areaECar);
 
       graph.append("path")
         .datum(groupedData)
-        .attr("fill", "rgb(154,202,94)")
+        .attr("fill", "rgb(82,169,240)")
         .attr("stroke", "rgb(81,81,81)")
         .attr("stroke-width", 0.5)
         .attr("d", vm.areaPV);
 
       graph.append("path")
         .datum(groupedData)
-        .attr("fill", "rgb(205,53,84)")
+        .attr("fill", "rgb(219,3,26)")
         .attr("stroke", "rgb(81,81,81)")
         .attr("stroke-width", 0.5)
         .attr("d", vm.areaGrid);
 
-      graph.append("path")
-        .datum(groupedData)
-        .attr("fill", "none")
-        .attr("stroke", "rgb(81,81,81)")
-        .attr("stroke-linejoin", "round")
-        .attr("stroke-linecap", "round")
-        .attr("stroke-width", 2)
-        .attr("d", function(d) {
-          return vm.line(d);
-        });
+      // graph.append("path")
+      //   .datum(groupedData)
+      //   .attr("fill", "none")
+      //   .attr("stroke", "rgb(81,81,81)")
+      //   .attr("stroke-linejoin", "round")
+      //   .attr("stroke-linecap", "round")
+      //   .attr("stroke-width", 2)
+      //   .attr("d", function(d) {
+      //     return vm.line(d);
+      //   });
 
-      $log.log("grouped data: ", groupedData);
+      // $log.log("grouped data: ", groupedData);
 
-      $log.log("refresh finished!");
+      // $log.log("refresh finished!");
 
     }
 
     function $onChanges(changesObj) {
-      $log.log("Change Diagram", vm.logEntries, changesObj, changesObj.logEntries.isFirstChange());
+      // $log.log("Change Diagram", vm.logEntries, changesObj, changesObj.logEntries.isFirstChange());
       _refresh();
     }
 
     function refetch() {
-      $log.log("before refetch Diagram", vm.logEntries);
+      // $log.log("before refetch Diagram", vm.logEntries);
       vm.onRefetch();
-      $log.log("after refetch Diagram", vm.logEntries);
+      // $log.log("after refetch Diagram", vm.logEntries);
     }
   }
 

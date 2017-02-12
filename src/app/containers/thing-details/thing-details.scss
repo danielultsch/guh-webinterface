@@ -117,6 +117,19 @@ $household-dark-grey: rgb(67,67,67);
 $household-light-grey: rgb(169,169,169);
 $household-green: rgb(154,202,94);
 
+.Household__name {
+  color: $household-dark-grey;
+  font-size: 25px;
+  line-height: 27px;
+  font-weight: bolder;
+  text-align: center;
+  position: absolute;
+  top: 45px;
+  left: 362px;
+  width: 300px;
+  z-index: 1000;
+}
+
 .Household__data-container {
   position: relative;
 }
@@ -124,13 +137,14 @@ $household-green: rgb(154,202,94);
 .Household__savings-container {
   position: relative;
   float: left;
-  width: 75%;
+
   margin-top: 6px;
 }
 
 .Household__status-container {
   position: relative;
-  right:0px;
+  right: 0;
+  float: right;
 }
 
 .Household__savings-headline, span.Household__subtitle, .Household__time {
@@ -313,3 +327,58 @@ td.Household__status-table-label {
   display: auto;
 }
 
+.ECar__battery-container > svg {
+  height: 380px;
+  width: 938px;
+  fill: $household-dark-grey;
+  position: relative;
+}
+
+#battery-loading-container {
+  position: absolute;
+  left: 369px;
+  top: 375px;
+  width: 251px;
+  height: 143px;
+}
+
+#battery-loading {
+  background: $household-green;
+  position: relative;
+  height: 143px;
+}
+
+.Household__action-container {
+  position: relative;
+  .ECar__trading-action-container .ButtonGroup__buttons {
+    guh-button:first-child {
+      // trading enable
+      button.Button {
+        position: absolute;
+        left: 369px;
+        color: white;
+        span {
+          display: none;
+        }
+      }
+      button.Button:after {
+        content: "ON";
+      }
+    }
+
+    guh-button:last-child {
+      // trading disable
+      button.Button {
+        position: absolute;
+        left: 369px;
+
+        span {
+          display: none;
+        }
+      }
+      button.Button:after {
+        content: "OFF";
+      }
+    }
+  }
+}
