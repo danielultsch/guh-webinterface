@@ -479,22 +479,26 @@
     }
 
     DSState.on('DS.change', function(DSState, newState) {
+      // $log.log('DS change:', newState, vm.device, device);
+      if(!vm.device || newState.deviceId !== vm.device.id) {
+        return;
+      }
 
       // States
       angular.forEach(vm.states, function(state, index) {
-        if(newState.deviceId === device.id && state.stateType.type === app.basicTypes.double && state.stateType.id === newState.stateType.id) {
+        if(newState.deviceId === vm.device.id && state.stateType.type === app.basicTypes.double && state.stateType.id === newState.stateType.id) {
           vm.states[index].value = $filter('number')(newState.value, '2');
         }
       });
 
-      if(newState.deviceId === device.id && MODE_ACTION_ID == newState.stateTypeId) {
+      if(MODE_ACTION_ID == newState.stateTypeId) {
         vm.modeState = newState;
       }
-      if(newState.deviceId === device.id && TRADING_ACTION_ID == newState.stateTypeId) {
+      if(TRADING_ACTION_ID == newState.stateTypeId) {
         vm.tradingState = newState;
       }
       // do not update the whole diagram for every new state value
-      if(newState.deviceId === device.id && newState.stateTypeId === TIME_STATE_ID) {
+      if(TIME_STATE_ID == newState.stateTypeId) {
         vm.updateLogEntries();
       }
     });
