@@ -81,17 +81,17 @@
           <th>kWh</th>
           <th>&euro;</th>
         </tr>
-        <tr>
+        <tr class="Household__status-table-pv">
           <td class="Household__status-table-label">PV</td>
           <td>{{ thingDetails.pvEnergy.value | number:2 }}</td>
           <td>{{ thingDetails.pvCosts.value | number:2 }}</td>
         </tr>
-        <tr>
+        <tr class="Household__status-table-grid">
           <td class="Household__status-table-label">GRID</td>
           <td>{{ thingDetails.gridEnergy.value | number:2 }}</td>
           <td>{{ thingDetails.gridCosts.value | number:2 }}</td>
         </tr>
-        <tr>
+        <tr class="Household__status-table-ecar">
           <td class="Household__status-table-label">E-CAR</td>
           <td>{{ thingDetails.eCarEnergy.value | number:2 }}</td>
           <td>{{ thingDetails.eCarCosts.value | number:2 }}</td>

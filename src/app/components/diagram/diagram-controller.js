@@ -175,7 +175,7 @@
       }
 
       var svg = d3.select($element[0]).select("svg");
-      var margin = {top: 20, right: 80, bottom: 30, left: 50};
+      var margin = {top: 50, right: 0, bottom: 30, left: 0};
       var width = svg.attr("width") - margin.left - margin.right;
       var height = svg.attr("height") - margin.top - margin.bottom;
       d3.selectAll("g").remove();
@@ -313,14 +313,14 @@
 
       graph.append("path")
         .datum(groupedData)
-        .attr("fill", "rgb(82,169,240)")
+        .attr("fill", "#539aca ")
         .attr("stroke", "rgb(81,81,81)")
         .attr("stroke-width", 0.5)
         .attr("d", vm.areaPV);
 
       graph.append("path")
         .datum(groupedData)
-        .attr("fill", "rgb(219,3,26)")
+        .attr("fill", "#e01784")
         .attr("stroke", "rgb(81,81,81)")
         .attr("stroke-width", 0.5)
         .attr("d", vm.areaGrid);

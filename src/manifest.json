@@ -38,6 +38,6 @@
 			"density": "4.0"
 		}
 	],
-	"display": "standalone",
-	"orientation": "portrait"
+	"display": "fullscreen",
+	"orientation": "landscape"
 }

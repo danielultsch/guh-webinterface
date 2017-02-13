@@ -61,6 +61,7 @@
     vm.gridEnergy = null;
     vm.pvCosts = null;
     vm.pvEnergy = null;
+    vm.annualSavings = null;
     vm.savings = null;
     vm.time = null;
     vm.totalCosts = null;
@@ -74,6 +75,7 @@
     vm.tradingAction = null;
     vm.tradingState = null;
 
+    const FINISHED_STATE_ID = '{17cc6160-881a-43ee-bd5a-d6218562c89f}';
 
     const E_CAR_COSTS_STATE_ID = '{d7379979-58f2-4318-8c2c-5cf0b7ec8aa7}';
     const E_CAR_ENERGY_STATE_ID = '{32ebbcc7-ec3d-4e7d-bc38-d29bd75a4bac}';
@@ -82,6 +84,7 @@
     const PV_COSTS_STATE_ID = '{d0d0f97c-36d9-4704-aa5c-c8268a22ef92}';
     const PV_ENERGY_STATE_ID = '{eef0526d-4901-4197-bde1-f2e5829fc8c3}';
     const SAVINGS_STATE_ID = '{d17ca984-5d03-4999-b823-da68144f0db8}';
+    const ANNUAL_SAVINGS_STATE_ID = '{d3db6e10-e21a-4206-8110-1b1fab0e30bc}';
     const TIME_STATE_ID = '{f7822921-8179-48af-9d99-c9a084b06316}';
     const TOTAL_COSTS_STATE_ID = '{6feff3d2-b7d2-404f-8fb0-d06a57ae50c6}';
     const TOTAL_ENERGY_STATE_ID = '{d5e0f05f-119f-4f43-971e-f6f3cc800686}';
@@ -112,6 +115,13 @@
 
       angular.forEach(vm.states, function(state, index) {
         switch(state.stateTypeId) {
+          case FINISHED_STATE_ID:
+              if(state.value == true) {
+                vm.eCarPercentage = 0;
+                vm.logEntries = {};
+                return;
+              }
+            break;
           case E_CAR_COSTS_STATE_ID:
             vm.eCarCosts = state;
             break;
@@ -135,6 +145,9 @@
             break;
           case SAVINGS_STATE_ID:
             vm.savings = state;
+            break;
+          case ANNUAL_SAVINGS_STATE_ID:
+            vm.annualSavings = state;
             break;
           case TIME_STATE_ID:
             vm.time = state;
@@ -276,7 +289,7 @@
           action.state = state;
           action.stateType = stateType;
 
-          // Remove state from steates array
+          // Remove state from states array
           vm.states = vm.states.filter(function(state) {
             return state.stateType.id !== actionType.id;
           });
@@ -474,14 +487,14 @@
         }
       });
 
-      if(MODE_ACTION_ID == newState.stateTypeId) {
+      if(newState.deviceId === device.id && MODE_ACTION_ID == newState.stateTypeId) {
         vm.modeState = newState;
       }
-      if(TRADING_ACTION_ID == newState.stateTypeId) {
+      if(newState.deviceId === device.id && TRADING_ACTION_ID == newState.stateTypeId) {
         vm.tradingState = newState;
       }
       // do not update the whole diagram for every new state value
-      if(newState.stateTypeId === TIME_STATE_ID) {
+      if(newState.deviceId === device.id && newState.stateTypeId === TIME_STATE_ID) {
         vm.updateLogEntries();
       }
     });

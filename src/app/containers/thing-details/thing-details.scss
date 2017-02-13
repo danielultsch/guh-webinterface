@@ -117,6 +117,10 @@ $household-dark-grey: rgb(67,67,67);
 $household-light-grey: rgb(169,169,169);
 $household-green: rgb(154,202,94);
 
+$household-grid: #e01784;
+$household-pv: #539aca;
+$household-ecar: rgb(116,176,166);
+
 .Household__name {
   color: $household-dark-grey;
   font-size: 25px;
@@ -137,7 +141,6 @@ $household-green: rgb(154,202,94);
 .Household__savings-container {
   position: relative;
   float: left;
-
   margin-top: 6px;
 }
 
@@ -175,7 +178,7 @@ $household-green: rgb(154,202,94);
 
 .Household__time {
   clear: left;
-  padding-top: 0px;
+  padding-top: 0;
   font-size: 25px;
   line-height: 27px;
   font-weight: bolder;
@@ -197,6 +200,18 @@ td.Household__status-table-label {
   width: 110px;
   text-align: left;
   padding-right: 30px;
+}
+
+.Household__status-table-pv {
+  color: $household-pv;
+}
+
+.Household__status-table-grid {
+  color: $household-grid;
+}
+
+.Household__status-table-sold, .Household__status-table-ecar {
+  color: $household-ecar
 }
 
 .Household__status-table-24hours-label {
