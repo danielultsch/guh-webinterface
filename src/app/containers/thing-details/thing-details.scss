@@ -234,7 +234,7 @@ td.Household__status-table-label {
 }
 
 .Household__diagram-container {
-  margin-top: 20px;
+  margin-top: 10px;
   position: relative;
 }
 
@@ -246,6 +246,7 @@ td.Household__status-table-label {
   }
 
   .ButtonGroup__buttons button.Button, .ButtonGroup__buttons button.Button:hover {
+    margin-top: 1rem;
     width: 200px;
     background-color: $household-dark-grey;
     color: $household-light-grey;

@@ -146,9 +146,9 @@
           case SAVINGS_STATE_ID:
             vm.savings = state;
             break;
-          case ANNUAL_SAVINGS_STATE_ID:
-            vm.annualSavings = state;
-            break;
+          // case ANNUAL_SAVINGS_STATE_ID:
+          //   vm.annualSavings = state;
+          //   break;
           case TIME_STATE_ID:
             vm.time = state;
             break;
